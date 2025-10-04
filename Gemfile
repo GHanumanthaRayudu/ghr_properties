@@ -33,7 +33,7 @@ gem "geocoder"
 
 # File uploads
 gem "carrierwave"
-gem "mimemagic", "~> 0.3.10"
+gem "mimemagic", "~> 0.4.3"
 
 # Search functionality
 gem "ransack"
