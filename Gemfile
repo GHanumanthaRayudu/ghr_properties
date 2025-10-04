@@ -72,7 +72,7 @@ gem "thruster", require: false
 # gem "rack-cors"
 
 # CSS framework
-gem "tailwindcss-rails", "~> 2.7"
+gem "tailwindcss-rails", "~> 4.3"
 
 # Asset pipeline for Rails 8
 gem "sprockets-rails"

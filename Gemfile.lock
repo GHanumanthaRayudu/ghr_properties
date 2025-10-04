@@ -463,14 +463,15 @@ GEM
     swagger-docs (0.2.9)
       activesupport (>= 3)
       rails (>= 3)
-    tailwindcss-rails (2.7.9-aarch64-linux)
+    tailwindcss-rails (4.3.0)
       railties (>= 7.0.0)
-    tailwindcss-rails (2.7.9-arm-linux)
-      railties (>= 7.0.0)
-    tailwindcss-rails (2.7.9-arm64-darwin)
-      railties (>= 7.0.0)
-    tailwindcss-rails (2.7.9-x86_64-linux)
-      railties (>= 7.0.0)
+      tailwindcss-ruby (~> 4.0)
+    tailwindcss-ruby (4.1.13)
+    tailwindcss-ruby (4.1.13-aarch64-linux-gnu)
+    tailwindcss-ruby (4.1.13-aarch64-linux-musl)
+    tailwindcss-ruby (4.1.13-arm64-darwin)
+    tailwindcss-ruby (4.1.13-x86_64-linux-gnu)
+    tailwindcss-ruby (4.1.13-x86_64-linux-musl)
     thor (1.4.0)
     thruster (0.1.15)
     thruster (0.1.15-aarch64-linux)
@@ -551,7 +552,7 @@ DEPENDENCIES
   sprockets-rails
   stimulus-rails
   swagger-docs
-  tailwindcss-rails (~> 2.7)
+  tailwindcss-rails (~> 4.3)
   thruster
   turbo-rails
   tzinfo-data
