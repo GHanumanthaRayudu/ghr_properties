@@ -1,0 +1,52 @@
+<div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+  <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+    <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+    </svg>
+    Send an Inquiry
+  </h3>
+  
+  <%= form_with model: @inquiry, url: property_inquiries_path(@property), method: :post, local: true, class: "space-y-4" do |f| %>
+    <% if @inquiry.errors.any? %>
+      <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">
+              <%= pluralize(@inquiry.errors.count, "error") %> prohibited this inquiry from being saved:
+            </h3>
+            <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+              <% @inquiry.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :message, "Your Message", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_area :message, rows: 6, 
+          placeholder: "Tell us about your interest in this property. Include any questions you have about the location, amenities, pricing, or viewing schedule...",
+          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition resize-none" %>
+      <p class="mt-2 text-sm text-gray-500">Minimum 10 characters, maximum 1000 characters</p>
+    </div>
+
+    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+      <p class="text-sm text-gray-600">
+        <svg class="inline w-4 h-4 text-gray-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        The property owner will receive your inquiry
+      </p>
+      <%= f.submit "Send Inquiry", class: "btn btn-primary px-6" %>
+    </div>
+  <% end %>
+</div>
+
+

@@ -1,0 +1,103 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  <div class="container mx-auto px-4 py-12">
+    <div class="mb-10 text-center">
+      <div class="inline-block mb-4">
+        <span class="text-6xl">❤️</span>
+      </div>
+      <h1 class="text-4xl font-extrabold text-gray-900 mb-3">My Favorite Properties</h1>
+      <p class="text-lg text-gray-600">Properties you've saved for later viewing</p>
+    </div>
+
+  <% if @favorite_properties.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <% @favorite_properties.each do |property| %>
+        <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+          <div class="relative h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+            <span class="text-7xl">
+              <%= property.property_type == 'apartment' ? '🏢' : property.property_type == 'villa' ? '🏰' : property.property_type == 'house' ? '🏠' : '🏘️' %>
+            </span>
+            <% favorite = current_user.favorites.find_by(property: property) %>
+            <% if favorite %>
+              <%= button_to favorite_path(favorite), method: :delete, class: "absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:bg-red-50 transition", form: { data: { turbo_confirm: "Remove from favorites?" } } do %>
+                <svg class="w-6 h-6 fill-current text-red-500" viewBox="0 0 20 20">
+                  <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                </svg>
+              <% end %>
+            <% end %>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition">
+              <%= link_to property.title, property_path(property) %>
+            </h3>
+            
+            <div class="flex gap-2 mb-4">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                <%= property.property_type.capitalize %>
+              </span>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500 to-green-600 text-white">
+                For <%= property.listing_type.capitalize %>
+              </span>
+            </div>
+
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed"><%= property.description %></p>
+
+            <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+              <div>
+                <p class="text-xs text-gray-500 mb-1">Price</p>
+                <p class="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  ₹<%= number_with_delimiter(property.price) %>
+                </p>
+              </div>
+              <% if property.reviews.any? %>
+                <div class="flex items-center bg-yellow-50 px-3 py-2 rounded-lg">
+                  <span class="text-yellow-500 text-xl">★</span>
+                  <span class="ml-1 font-bold text-gray-900"><%= property.average_rating %></span>
+                  <span class="text-xs text-gray-500 ml-1">(<%= property.reviews_count %>)</span>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 mb-4">
+              <div class="text-center p-2 bg-gray-50 rounded-lg">
+                <p class="text-2xl mb-1">🛏️</p>
+                <p class="text-xs text-gray-600"><%= property.bedrooms %> Beds</p>
+              </div>
+              <div class="text-center p-2 bg-gray-50 rounded-lg">
+                <p class="text-2xl mb-1">🚿</p>
+                <p class="text-xs text-gray-600"><%= property.bathrooms %> Baths</p>
+              </div>
+              <div class="text-center p-2 bg-gray-50 rounded-lg">
+                <p class="text-2xl mb-1">📐</p>
+                <p class="text-xs text-gray-600"><%= property.area %> sqft</p>
+              </div>
+            </div>
+
+            <div class="flex items-center text-sm text-gray-600 mb-4 bg-blue-50 px-3 py-2 rounded-lg">
+              <span class="text-lg mr-2">📍</span>
+              <span class="font-medium"><%= property.city %>, <%= property.state %></span>
+            </div>
+
+            <%= link_to "View Details", property_path(property), class: "block w-full text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-12 text-center">
+      <div class="mb-6">
+        <span class="text-8xl">💔</span>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-3">No favorites yet</h3>
+      <p class="text-gray-600 mb-8">Start building your dream property collection by adding favorites!</p>
+      <%= link_to properties_path, class: "inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-200" do %>
+        <span>Browse Properties</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+      <% end %>
+    </div>
+  <% end %>
+  </div>
+</div>
+

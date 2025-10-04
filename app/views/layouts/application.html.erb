@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <title><%= content_for(:title) || "GHR Properties - Find Your Dream Property" %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Find rental and sale properties without broker fees">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body class="h-full bg-gray-50">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <%= link_to root_path, class: "flex items-center space-x-2" do %>
+            <span class="text-2xl">🏠</span>
+            <span class="text-xl font-bold text-primary-600">GHR Properties</span>
+          <% end %>
+          
+          <div class="hidden md:ml-10 md:flex md:space-x-8">
+            <%= link_to "Properties", properties_path, class: "text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium" %>
+            <%= link_to "Search", search_path, class: "text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium" %>
+            <% if user_signed_in? %>
+              <%= link_to "Post Property", new_property_path, class: "text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium" %>
+              <%= link_to "Favorites", favorites_path, class: "text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium" %>
+              <%= link_to "Messages", messages_path, class: "text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium" %>
+              <% if comparison_count > 0 %>
+                <%= link_to "Compare (#{comparison_count})", comparisons_path, class: "text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium bg-blue-50 rounded" %>
+              <% else %>
+                <%= link_to "Compare", comparisons_path, class: "text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium" %>
+              <% end %>
+              <%= link_to "Dashboard", dashboard_path, class: "text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium" %>
+            <% end %>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <% if user_signed_in? %>
+            <div class="flex items-center space-x-3">
+              <span class="text-sm text-gray-700">Welcome, <span class="font-semibold"><%= current_user.name || current_user.email %></span></span>
+              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "btn btn-secondary text-sm" %>
+            </div>
+          <% else %>
+            <%= link_to "Sign In", new_user_session_path, class: "text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium" %>
+            <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-primary text-sm" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  <% if notice || alert %>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+      <% if notice %>
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-4">
+          <%= notice %>
+        </div>
+      <% end %>
+      <% if alert %>
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-4">
+          <%= alert %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Main Content -->
+  <main class="min-h-screen">
+    <%= yield %>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-bold mb-4">About GHR</h3>
+          <p class="text-gray-400 text-sm">
+            India's largest no ghr property site. Buy, Rent, or Sell properties without paying any brokerage.
+          </p>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+          <ul class="space-y-2 text-sm">
+            <li><%= link_to "Properties for Rent", properties_path, class: "text-gray-400 hover:text-white" %></li>
+            <li><%= link_to "Properties for Sale", properties_path, class: "text-gray-400 hover:text-white" %></li>
+            <li><%= link_to "Post Your Property", new_property_path, class: "text-gray-400 hover:text-white" if user_signed_in? %></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-4">Support</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-4">Connect With Us</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white">
+              <span class="text-2xl">📘</span>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <span class="text-2xl">🐦</span>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <span class="text-2xl">📷</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+        <p>&copy; <%= Time.current.year %> GHR Properties. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
+

@@ -1,0 +1,7 @@
+en:
+  devise:
+    failure:
+      phone_not_verified: "You must verify your phone number before continuing. Please check your SMS for the OTP."
+    registrations:
+      signed_up_but_unconfirmed: "A verification code has been sent to your phone. Please verify to continue."
+

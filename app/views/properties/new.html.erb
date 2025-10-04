@@ -1,0 +1,13 @@
+<% content_for :title, "Post New Property - GHR Properties" %>
+
+<div class="bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-8">
+      <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Post New Property</h1>
+      <p class="text-lg text-gray-600">Fill in the details to list your property</p>
+    </div>
+
+    <%= render "form", property: @property %>
+  </div>
+</div>
+

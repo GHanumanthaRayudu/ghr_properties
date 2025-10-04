@@ -1,0 +1,154 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">Advanced Property Search</h1>
+
+  <!-- Advanced Search Form -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <%= form_with(url: search_path, method: :get, class: "space-y-6") do |f| %>
+      <!-- Keyword Search -->
+      <div>
+        <%= f.label :query, "Search Keywords", class: "block text-gray-700 font-semibold mb-2" %>
+        <%= f.text_field :query, value: params[:query], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "Search by title, description, address, amenities..." %>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Property Type -->
+        <div>
+          <%= f.label :property_type, "Property Type", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.select :property_type, options_for_select([["All Types", ""], ["Apartment", "apartment"], ["House", "house"], ["Villa", "villa"], ["Studio", "studio"]], params[:property_type]), {}, class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+        </div>
+
+        <!-- Listing Type -->
+        <div>
+          <%= f.label :listing_type, "For", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.select :listing_type, options_for_select([["All", ""], ["Rent", "rent"], ["Sale", "sale"]], params[:listing_type]), {}, class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+        </div>
+
+        <!-- Bedrooms -->
+        <div>
+          <%= f.label :bedrooms, "Min Bedrooms", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.number_field :bedrooms, value: params[:bedrooms], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "Any" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Location -->
+        <div>
+          <%= f.label :city, "City", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.text_field :city, value: params[:city], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "e.g., Bangalore" %>
+        </div>
+
+        <div>
+          <%= f.label :state, "State", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.text_field :state, value: params[:state], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "e.g., Karnataka" %>
+        </div>
+
+        <!-- Bathrooms -->
+        <div>
+          <%= f.label :bathrooms, "Min Bathrooms", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.number_field :bathrooms, value: params[:bathrooms], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "Any" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Price Range -->
+        <div>
+          <%= f.label :min_price, "Min Price (₹)", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.number_field :min_price, value: params[:min_price], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "0" %>
+        </div>
+
+        <div>
+          <%= f.label :max_price, "Max Price (₹)", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.number_field :max_price, value: params[:max_price], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "No limit" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Area Range -->
+        <div>
+          <%= f.label :min_area, "Min Area (sqft)", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.number_field :min_area, value: params[:min_area], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "0" %>
+        </div>
+
+        <div>
+          <%= f.label :max_area, "Max Area (sqft)", class: "block text-gray-700 font-semibold mb-2" %>
+          <%= f.number_field :max_area, value: params[:max_area], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "No limit" %>
+        </div>
+      </div>
+
+      <!-- Amenities -->
+      <div>
+        <%= f.label :amenities, "Amenities (keywords)", class: "block text-gray-700 font-semibold mb-2" %>
+        <%= f.text_field :amenities, value: params[:amenities], class: "w-full px-4 py-2 border border-gray-300 rounded-lg", placeholder: "e.g., parking, gym, pool" %>
+      </div>
+
+      <div class="flex gap-4">
+        <%= f.submit "Search Properties", class: "bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 cursor-pointer" %>
+        <%= link_to "Clear Filters", search_path, class: "bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Search Results -->
+  <div class="mb-4">
+    <h2 class="text-xl font-semibold text-gray-900">
+      Found <%= @properties.total_count %> <%= "property".pluralize(@properties.total_count) %>
+    </h2>
+  </div>
+
+  <% if @properties.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @properties.each do |property| %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+          <div class="p-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              <%= link_to property.title, property_path(property), class: "hover:text-blue-600" %>
+            </h3>
+            
+            <div class="mb-3">
+              <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                <%= property.property_type %>
+              </span>
+              <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded ml-2">
+                For <%= property.listing_type %>
+              </span>
+            </div>
+
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2"><%= property.description %></p>
+
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-2xl font-bold text-blue-600">₹<%= number_with_delimiter(property.price) %></span>
+              <% if property.reviews.any? %>
+                <div class="flex items-center">
+                  <span class="text-yellow-500">★</span>
+                  <span class="ml-1 text-sm text-gray-600"><%= property.average_rating %> (<%= property.reviews_count %>)</span>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="flex items-center justify-between text-sm text-gray-600 mb-4">
+              <span><%= property.bedrooms %> Beds</span>
+              <span><%= property.bathrooms %> Baths</span>
+              <span><%= property.area %> sqft</span>
+            </div>
+
+            <div class="text-sm text-gray-500 mb-4">
+              📍 <%= property.city %>, <%= property.state %>
+            </div>
+
+            <%= link_to "View Details", property_path(property), class: "block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-8">
+      <%= paginate @properties %>
+    </div>
+  <% else %>
+    <div class="text-center py-16 bg-white rounded-lg shadow-md">
+      <p class="text-gray-500 text-lg">No properties found matching your criteria.</p>
+      <p class="text-gray-400 mt-2">Try adjusting your search filters.</p>
+    </div>
+  <% end %>
+</div>
+

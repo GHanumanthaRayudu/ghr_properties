@@ -1,0 +1,54 @@
+<div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-12">
+  <div class="container mx-auto px-4 max-w-3xl">
+    <div class="text-center mb-8">
+      <div class="inline-block mb-4">
+        <span class="text-6xl">📧</span>
+      </div>
+      <h1 class="text-4xl font-extrabold text-gray-900 mb-3">Contact Property Owner</h1>
+      <div class="bg-white rounded-xl shadow-md px-6 py-4 inline-block">
+        <p class="text-gray-600">Inquiring about: <span class="font-bold text-blue-600"><%= @property.title %></span></p>
+      </div>
+    </div>
+
+  <%= form_with(model: @message, url: property_messages_path(@property), class: "bg-white shadow-2xl rounded-2xl p-10") do |f| %>
+    <% if @message.errors.any? %>
+      <div class="bg-red-50 border-l-4 border-red-500 text-red-800 px-6 py-4 rounded-xl mb-8 shadow-md">
+        <h2 class="font-bold text-lg mb-3 flex items-center gap-2">
+          <span class="text-2xl">⚠️</span>
+          <%= pluralize(@message.errors.count, "error") %> found:
+        </h2>
+        <ul class="list-disc list-inside space-y-1">
+          <% @message.errors.full_messages.each do |message| %>
+            <li class="text-sm"><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="mb-8">
+      <%= f.label :subject, class: "block text-gray-800 font-bold mb-3 flex items-center gap-2" do %>
+        <span class="text-xl">💭</span>
+        <span>Subject</span>
+      <% end %>
+      <%= f.text_field :subject, class: "w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shadow-sm hover:shadow-md", placeholder: "What would you like to know?" %>
+    </div>
+
+    <div class="mb-8">
+      <%= f.label :content, "Message", class: "block text-gray-800 font-bold mb-3 flex items-center gap-2" do %>
+        <span class="text-xl">✍️</span>
+        <span>Your Message</span>
+      <% end %>
+      <%= f.text_area :content, rows: 8, class: "w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shadow-sm hover:shadow-md resize-none", placeholder: "Introduce yourself and explain what you'd like to know about this property..." %>
+      <p class="mt-2 text-sm text-gray-500">Be specific about your questions to get a better response</p>
+    </div>
+
+    <div class="flex gap-4">
+      <%= f.submit "Send Message", class: "flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-bold hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer" %>
+      <%= link_to property_path(@property), class: "inline-flex items-center justify-center gap-2 bg-gray-100 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-200" do %>
+        <span>Cancel</span>
+      <% end %>
+    </div>
+  <% end %>
+  </div>
+</div>
+

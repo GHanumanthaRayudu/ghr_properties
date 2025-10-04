@@ -1,0 +1,434 @@
+<% content_for :title, "Sign Up - GHR Properties" %>
+
+<div class="min-h-screen bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
+    <div class="text-center mb-8">
+      <div class="flex items-center justify-center mb-4">
+        <span class="text-5xl">🏠</span>
+      </div>
+      <h2 class="text-3xl font-extrabold text-gray-900">Create your account</h2>
+      <p class="mt-2 text-sm text-gray-600">
+        Join GHR Properties to find your dream property
+      </p>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-6" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <!-- Role Selection -->
+      <div>
+        <%= f.label :role, "I am a", class: "form-label" %>
+        <%= f.select :role, 
+            [
+              ['Developer', 'developer'],
+              ['Agent', 'agent'],
+              ['Customer', 'customer']
+            ],
+            { selected: 'customer' },
+            { id: 'user_role', class: "form-input" } %>
+        <p class="mt-1 text-xs text-gray-500">
+          Developers & Agents can post properties. Customers can browse and inquire.
+        </p>
+      </div>
+
+      <div>
+        <%= f.label :email, class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input", required: true %>
+      </div>
+
+      <!-- Phone Number Field (for Agents & Customers) -->
+      <div id="phone-field" style="display: block !important;">
+        <%= f.label :phone_number, "Mobile Number", class: "form-label flex items-center gap-2" %>
+        <div class="flex items-center gap-2" style="display: flex !important;">
+          <div class="flex items-center flex-1">
+            <span class="inline-flex items-center px-3 py-2 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+              +91
+            </span>
+            <%= f.text_field :phone_number,
+                id: "user_phone_number",
+                placeholder: "9876543210",
+                maxlength: 10,
+                pattern: "[0-9]{10}",
+                class: "form-input rounded-l-none flex-1",
+                required: true %>
+          </div>
+          <button type="button" 
+                  id="send-otp-btn" 
+                  style="display: inline-block !important; padding: 0.5rem 1rem; background-color: #2563eb; color: white; border-radius: 0.5rem; border: none; cursor: pointer; font-weight: 500;"
+                  onmouseover="this.style.backgroundColor='#1d4ed8'"
+                  onmouseout="this.style.backgroundColor='#2563eb'">
+            📱 Send OTP
+          </button>
+        </div>
+        <p class="mt-1 text-xs text-gray-500" id="phone-helper-text">
+          📱 Click "Send OTP" to verify your number
+        </p>
+      </div>
+
+      <!-- OTP Verification Field (temporarily visible for testing) -->
+      <div id="otp-field" style="border: 2px solid blue; padding: 1rem; background: #f0f9ff;">
+        <%= f.label :otp_code, "Enter OTP", class: "form-label flex items-center gap-2" %>
+        <div class="flex items-center gap-2">
+          <%= f.text_field :otp_code,
+              id: "user_otp_code",
+              placeholder: "Enter 6-digit OTP",
+              maxlength: 6,
+              pattern: "[0-9]{6}",
+              class: "form-input flex-1",
+              autocomplete: "off" %>
+          <button type="button" id="verify-otp-btn"
+                  class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap">
+            Verify OTP
+          </button>
+        </div>
+        <div class="flex justify-between items-center mt-1">
+          <p class="text-xs text-gray-500">
+            <span id="otp-timer">⏰ OTP expires in 10:00</span>
+          </p>
+          <button type="button" id="resend-otp-btn" 
+                  class="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled>
+            Resend OTP (wait <span id="resend-countdown">60</span>s)
+          </button>
+        </div>
+        <div id="otp-status" class="mt-2"></div>
+      </div>
+
+      <div>
+        <%= f.label :password, class: "form-label" %>
+        <%= f.password_field :password, autocomplete: "new-password", class: "form-input", required: true %>
+        <% if @minimum_password_length %>
+          <p class="mt-1 text-sm text-gray-500">
+            (<%= @minimum_password_length %> characters minimum)
+          </p>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :password_confirmation, "Confirm Password", class: "form-label" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-input", required: true %>
+      </div>
+
+      <div>
+        <%= f.submit "Sign up", 
+            id: "signup-submit-btn",
+            disabled: true,
+            class: "btn btn-primary w-full py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed",
+            style: "opacity: 0.5; cursor: not-allowed;",
+            data: { verified: "false" } %>
+        <p id="signup-helper-text" class="mt-2 text-xs text-center text-red-600 font-medium">
+          ⚠️ Please verify your phone number with OTP before signing up
+        </p>
+      </div>
+    <% end %>
+
+    <style>
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+      }
+      
+      #signup-submit-btn:disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        background-color: #9ca3af !important;
+      }
+      
+      #signup-submit-btn:not(:disabled) {
+        opacity: 1 !important;
+        cursor: pointer !important;
+      }
+    </style>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 OTP Script loaded!');
+        
+        const roleSelect = document.getElementById('user_role');
+        const phoneField = document.getElementById('phone-field');
+        const phoneInput = document.getElementById('user_phone_number');
+        const otpField = document.getElementById('otp-field');
+        const sendOtpBtn = document.getElementById('send-otp-btn');
+        const verifyOtpBtn = document.getElementById('verify-otp-btn');
+        const resendOtpBtn = document.getElementById('resend-otp-btn');
+        const otpInput = document.getElementById('user_otp_code');
+        const signupBtn = document.getElementById('signup-submit-btn');
+        const signupHelperText = document.getElementById('signup-helper-text');
+        const otpStatus = document.getElementById('otp-status');
+        const phoneHelperText = document.getElementById('phone-helper-text');
+        
+        console.log('Elements found:', {
+          roleSelect: !!roleSelect,
+          phoneField: !!phoneField,
+          phoneInput: !!phoneInput,
+          sendOtpBtn: !!sendOtpBtn,
+          signupBtn: !!signupBtn
+        });
+        
+        // Safety check
+        if (!roleSelect || !phoneField || !phoneInput || !sendOtpBtn || !signupBtn) {
+          console.error('❌ Some required elements are missing!');
+          return;
+        }
+        
+        let otpSentTime = null;
+        let otpExpiryTimer = null;
+        let resendCountdownTimer = null;
+        let isOtpVerified = false;
+        let tempOtpCode = null; // Store OTP temporarily
+        
+        // Show/hide phone field and OTP requirement based on role
+        function togglePhoneField() {
+          console.log('togglePhoneField called');
+          const role = roleSelect.value;
+          console.log('Current role:', role);
+          if (role === 'developer') {
+            phoneField.style.display = 'none';
+            otpField.classList.add('hidden');
+            phoneInput.removeAttribute('required');
+            // Enable signup for developers
+            signupBtn.disabled = false;
+            signupBtn.style.opacity = '1';
+            signupBtn.style.cursor = 'pointer';
+            signupHelperText.classList.add('hidden');
+            isOtpVerified = true; // Developers don't need OTP
+            console.log('✅ Developer mode - Signup enabled');
+          } else {
+            phoneField.style.display = 'block';
+            phoneInput.setAttribute('required', 'required');
+            // Disable signup for agents/customers until OTP verified
+            if (!isOtpVerified) {
+              signupBtn.disabled = true;
+              signupBtn.style.opacity = '0.5';
+              signupBtn.style.cursor = 'not-allowed';
+              signupHelperText.classList.remove('hidden');
+              console.log('🔒 Agent/Customer mode - Signup disabled until OTP verified');
+            } else {
+              signupBtn.disabled = false;
+              signupBtn.style.opacity = '1';
+              signupBtn.style.cursor = 'pointer';
+              signupHelperText.classList.add('hidden');
+              console.log('✅ OTP verified - Signup enabled');
+            }
+          }
+        }
+        
+        roleSelect.addEventListener('change', function() {
+          togglePhoneField();
+          // Reset OTP state when role changes
+          otpField.classList.add('hidden');
+          isOtpVerified = false;
+          tempOtpCode = null;
+          clearTimers();
+        });
+        togglePhoneField(); // Run on page load
+        
+        // Send OTP
+        sendOtpBtn.addEventListener('click', function(e) {
+          e.preventDefault(); // Prevent any form submission
+          console.log('📱 Send OTP button clicked!');
+          
+          const phone = phoneInput.value.trim();
+          console.log('Phone number:', phone);
+          
+          if (!phone || phone.length !== 10 || !/^[0-9]{10}$/.test(phone)) {
+            showStatus('error', '❌ Please enter a valid 10-digit phone number');
+            return;
+          }
+          
+          sendOtpBtn.disabled = true;
+          sendOtpBtn.textContent = 'Sending...';
+          
+          // Generate OTP (in real app, this would be server-side)
+          tempOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+          console.log('✅ Generated OTP:', tempOtpCode); // For development
+          alert('📱 OTP sent! Check console: ' + tempOtpCode); // For development
+          
+          // Show OTP field
+          otpField.classList.remove('hidden');
+          otpSentTime = Date.now();
+          
+          showStatus('success', '✅ OTP sent to +91' + phone);
+          phoneHelperText.textContent = '📱 OTP sent successfully!';
+          phoneHelperText.classList.add('text-green-600');
+          
+          sendOtpBtn.textContent = 'OTP Sent ✓';
+          startOtpExpiryTimer();
+          startResendCountdown();
+        });
+        
+        // Verify OTP
+        verifyOtpBtn.addEventListener('click', function() {
+          const enteredOtp = otpInput.value.trim();
+          
+          if (!enteredOtp || enteredOtp.length !== 6) {
+            showStatus('error', '❌ Please enter the 6-digit OTP');
+            return;
+          }
+          
+          // Check if OTP expired (10 minutes)
+          if (Date.now() - otpSentTime > 10 * 60 * 1000) {
+            showStatus('error', '❌ OTP has expired. Please request a new one.');
+            return;
+          }
+          
+          // Verify OTP
+          if (enteredOtp === tempOtpCode) {
+            isOtpVerified = true;
+            showStatus('success', '✅ Phone number verified successfully! You can now sign up.');
+            
+            // Enable signup button with full styling
+            signupBtn.disabled = false;
+            signupBtn.style.opacity = '1';
+            signupBtn.style.cursor = 'pointer';
+            signupHelperText.classList.add('hidden');
+            signupHelperText.textContent = '';
+            
+            console.log('✅ OTP Verified - Signup button enabled');
+            
+            // Disable OTP fields
+            otpInput.disabled = true;
+            verifyOtpBtn.disabled = true;
+            sendOtpBtn.disabled = true;
+            resendOtpBtn.disabled = true;
+            
+            verifyOtpBtn.textContent = 'Verified ✓';
+            verifyOtpBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            verifyOtpBtn.classList.add('bg-green-500');
+            
+            // Add visual feedback - green border on form
+            otpInput.classList.add('border-green-500', 'bg-green-50');
+            
+            clearTimers();
+          } else {
+            showStatus('error', '❌ Invalid OTP. Please try again.');
+            otpInput.value = '';
+            otpInput.focus();
+          }
+        });
+        
+        // Resend OTP
+        resendOtpBtn.addEventListener('click', function() {
+          if (resendOtpBtn.disabled) return;
+          
+          const phone = phoneInput.value.trim();
+          tempOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+          console.log('Resent OTP:', tempOtpCode); // For development
+          alert('📱 New OTP sent! Check console: ' + tempOtpCode); // For development
+          
+          otpSentTime = Date.now();
+          otpInput.value = '';
+          showStatus('success', '✅ New OTP sent to +91' + phone);
+          
+          startOtpExpiryTimer();
+          startResendCountdown();
+        });
+        
+        // OTP expiry timer (10 minutes)
+        function startOtpExpiryTimer() {
+          clearInterval(otpExpiryTimer);
+          const timerElement = document.getElementById('otp-timer');
+          
+          otpExpiryTimer = setInterval(function() {
+            const elapsed = Date.now() - otpSentTime;
+            const remaining = (10 * 60 * 1000) - elapsed;
+            
+            if (remaining <= 0) {
+              timerElement.textContent = '⏰ OTP expired';
+              timerElement.classList.add('text-red-600', 'font-semibold');
+              clearInterval(otpExpiryTimer);
+            } else {
+              const minutes = Math.floor(remaining / 60000);
+              const seconds = Math.floor((remaining % 60000) / 1000);
+              timerElement.textContent = `⏰ OTP expires in ${minutes}:${seconds.toString().padStart(2, '0')}`;
+              timerElement.classList.remove('text-red-600', 'font-semibold');
+            }
+          }, 1000);
+        }
+        
+        // Resend countdown (60 seconds)
+        function startResendCountdown() {
+          resendOtpBtn.disabled = true;
+          let countdown = 60;
+          const countdownElement = document.getElementById('resend-countdown');
+          
+          clearInterval(resendCountdownTimer);
+          resendCountdownTimer = setInterval(function() {
+            countdown--;
+            countdownElement.textContent = countdown;
+            
+            if (countdown <= 0) {
+              resendOtpBtn.disabled = false;
+              resendOtpBtn.innerHTML = 'Resend OTP';
+              clearInterval(resendCountdownTimer);
+            }
+          }, 1000);
+        }
+        
+        // Show status message
+        function showStatus(type, message) {
+          const bgColor = type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200';
+          otpStatus.innerHTML = `
+            <div class="p-3 rounded-lg border ${bgColor} text-sm">
+              ${message}
+            </div>
+          `;
+          
+          setTimeout(() => {
+            if (type !== 'success' || !isOtpVerified) {
+              otpStatus.innerHTML = '';
+            }
+          }, 5000);
+        }
+        
+        // Clear all timers
+        function clearTimers() {
+          clearInterval(otpExpiryTimer);
+          clearInterval(resendCountdownTimer);
+        }
+        
+        // Prevent form submission if OTP not verified (for agents/customers)
+        document.querySelector('form').addEventListener('submit', function(e) {
+          const role = roleSelect.value;
+          if (role !== 'developer' && !isOtpVerified) {
+            e.preventDefault();
+            signupHelperText.classList.remove('hidden');
+            signupHelperText.textContent = '⚠️ Please verify your phone number with OTP before signing up';
+            showStatus('error', '❌ Please verify your phone number before signing up');
+            
+            // Scroll to phone field
+            phoneField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Flash the signup button to show it's disabled
+            signupBtn.style.animation = 'shake 0.5s';
+            setTimeout(() => {
+              signupBtn.style.animation = '';
+            }, 500);
+            
+            console.log('❌ Form submission blocked - OTP not verified');
+            return false;
+          }
+          
+          console.log('✅ Form submitted successfully');
+        });
+      });
+    </script>
+
+    <div class="mt-6">
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white text-gray-500">Already have an account?</span>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <%= link_to "Sign in", new_session_path(resource_name), class: "font-medium text-primary-600 hover:text-primary-500" %>
+      </div>
+    </div>
+  </div>
+</div>
+
